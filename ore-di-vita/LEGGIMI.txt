@@ -1,0 +1,24 @@
+ORE DI VITA – come pubblicarla su Vercel
+
+1) Il bottone donazioni punta già a https://buymeacoffee.com/alexsofo
+   Per cambiarlo, cerca quell'indirizzo in index.html e sostituiscilo.
+
+2) Vai su vercel.com e crea un account gratuito (piano Hobby).
+
+3) Metodo GitHub (consigliato, si aggiorna da solo):
+   - crea un repository su github.com, ad esempio "ore-di-vita"
+   - carica tutti i file di questa cartella (index.html, manifest.webmanifest, cartella icons)
+   - su Vercel: Add New > Project > importa il repository > Deploy
+   - ogni volta che modifichi un file su GitHub, Vercel ripubblica in automatico
+
+   Metodo da computer (riga di comando):
+   - installa Node.js, poi nel terminale: npm i -g vercel
+   - entra in questa cartella e scrivi: vercel --prod
+
+4) Otterrai un indirizzo tipo ore-di-vita.vercel.app.
+   Se compri un dominio, lo colleghi da Project > Settings > Domains.
+
+Note
+- Sul telefono: apri il sito e scegli "Aggiungi a schermata Home" per averla come app.
+- I dati degli utenti restano solo sul loro telefono (localStorage): niente server, niente database.
+- Le donazioni volontarie sono ammesse sul piano Hobby; se in futuro metti funzioni a pagamento serve il piano Pro.

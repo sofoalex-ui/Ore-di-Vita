@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ore di vita</title>
+<meta name="description" content="Scopri quanto vale davvero un’ora del tuo lavoro: paga oraria reale, costi per lavorare, contributi e quanto ti costa in ore quello che compri.">
+<meta name="theme-color" content="#5638B5">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ore di vita">
+<meta property="og:title" content="Ore di vita – quanto vale davvero il tuo tempo">
+<meta property="og:description" content="Calcola la tua paga oraria reale e quante ore di lavoro ti costa ciò che compri.">
+<meta property="og:image" content="/icons/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#DFE3EA; --card:#F3E5B6; --card2:#EAD99F; --ink:#1E2330; --muted:#5A5F6C;
+  --stamp:#5638B5; --stampSoft:rgba(86,56,181,.12); --rule:#C9B67D; --good:#1F7A4D; --bad:#B23A3A;
+  --field:#FFFBEE;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#14171D; --card:#252A33; --card2:#2E3440; --ink:#ECE8DC; --muted:#9DA3AF;
+    --stamp:#B3A2FF; --stampSoft:rgba(179,162,255,.14); --rule:#3D4350; --good:#5FD39A; --bad:#FF8A8A;
+    --field:#1B1F27;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#14171D; --card:#252A33; --card2:#2E3440; --ink:#ECE8DC; --muted:#9DA3AF;
+  --stamp:#B3A2FF; --stampSoft:rgba(179,162,255,.14); --rule:#3D4350; --good:#5FD39A; --bad:#FF8A8A;
+  --field:#1B1F27;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums;line-height:1.45;font-size:17px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 48px}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 10px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand{font-weight:800;font-size:1.35rem;letter-spacing:-.02em;margin:0}
+.brand small{display:block;font-weight:400;font-size:.8rem;color:var(--muted);letter-spacing:0}
+.mini{text-align:right;font-size:.78rem;color:var(--muted)}
+.mini b{display:block;font-size:1.25rem;color:var(--stamp);font-weight:800}
+
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px;background:var(--card2);padding:4px;border-radius:12px}
+nav button{
+  font:inherit;font-size:.85rem;font-weight:600;border:0;background:transparent;color:var(--muted);
+  padding:9px 4px;border-radius:9px;cursor:pointer
+}
+nav button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--rule)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--stamp);outline-offset:2px}
+
+section[hidden]{display:none}
+.card{
+  background:var(--card);border-radius:6px;padding:18px 18px 8px;margin-top:14px;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 43px,var(--rule) 43px,var(--rule) 44px);
+  background-position:0 52px;background-repeat:no-repeat;background-size:100% calc(100% - 60px);
+}
+.card.plain{background-image:none;padding-bottom:16px}
+h2{font-size:1.05rem;margin:0 0 8px;font-weight:800;letter-spacing:-.01em}
+p.note{font-size:.88rem;color:var(--muted);margin:6px 0 10px}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.row label,.row span.l{font-size:.95rem}
+.row .val{font-weight:600}
+.in{display:flex;align-items:center;gap:6px}
+.in input{
+  width:96px;font:inherit;font-weight:600;text-align:right;padding:6px 8px;border-radius:6px;
+  border:1px solid var(--rule);background:var(--field);color:var(--ink)
+}
+.in i{font-style:normal;font-size:.8rem;color:var(--muted);min-width:34px}
+
+.hero{text-align:center;padding:26px 12px 22px}
+.hero .lead{font-size:.95rem;color:var(--muted);margin:0}
+.stamp{
+  display:inline-block;margin:10px 0 6px;color:var(--stamp);font-weight:800;
+  font-size:clamp(2.8rem,14vw,4.4rem);letter-spacing:-.03em;line-height:1;
+  transform:rotate(-2deg);padding:8px 16px;border:3px solid var(--stamp);border-radius:8px;
+  background:var(--stampSoft)
+}
+.hero .sub{font-size:.9rem;margin:8px 0 0}
+.delta{font-weight:600}
+.delta.bad{color:var(--bad)} .delta.good{color:var(--good)}
+
+.big-in{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:6px}
+.big-in input{
+  width:170px;font:inherit;font-size:2rem;font-weight:800;text-align:center;padding:8px;
+  border:2px solid var(--rule);border-radius:8px;background:var(--field);color:var(--ink)
+}
+.big-in span{font-size:1.6rem;font-weight:800}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.chips button{font:inherit;font-size:.82rem;border:1px solid var(--rule);background:var(--field);color:var(--ink);border-radius:20px;padding:6px 11px;cursor:pointer}
+
+.item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;min-height:44px;padding:4px 0}
+.item .name{font-size:.95rem}
+.item .name small{display:block;color:var(--muted);font-size:.78rem}
+.item .q{text-align:right;font-weight:800;color:var(--stamp)}
+.item .q small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+.x{border:0;background:transparent;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:6px 8px;border-radius:6px}
+.add{display:grid;grid-template-columns:1fr 92px auto;gap:6px;margin-top:10px}
+.add input{font:inherit;padding:8px;border:1px solid var(--rule);border-radius:6px;background:var(--field);color:var(--ink);min-width:0}
+.btn{font:inherit;font-weight:600;border:0;border-radius:6px;padding:9px 14px;background:var(--stamp);color:var(--bg);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--rule)}
+.verdict{font-size:1.05rem;font-weight:600;margin:12px 0 0;text-align:center}
+footer{font-size:.78rem;color:var(--muted);margin-top:22px}
+footer a{color:var(--stamp)}
+.donate{display:flex;align-items:center;gap:14px;background:transparent;border:2px dashed var(--rule);border-radius:6px;padding:14px 16px;margin-top:14px}
+.donate p{margin:0;font-size:.9rem;flex:1}
+.donate p b{display:block;font-size:1rem}
+.donate a{flex:none;text-decoration:none;font-weight:600;border-radius:6px;padding:10px 14px;background:var(--stamp);color:var(--bg)}
+@media (prefers-reduced-motion: no-preference){
+  .stamp.pop{animation:pop .35s ease-out}
+  @keyframes pop{0%{transform:rotate(-2deg) scale(1.12);opacity:.4}100%{transform:rotate(-2deg) scale(1);opacity:1}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="top">
+    <h1 class="brand">Ore di vita<small>Quanto vale davvero il tuo tempo</small></h1>
+    <div class="mini">La tua ora reale<b id="miniHour">—</b></div>
+  </div>
+  <nav role="tablist" aria-label="Sezioni">
+    <button role="tab" data-tab="lavoro">Il lavoro</button>
+    <button role="tab" data-tab="ora">L’ora reale</button>
+    <button role="tab" data-tab="costa">Quanto costa</button>
+    <button role="tab" data-tab="conviene">Conviene?</button>
+  </nav>
+</header>
+
+<!-- LAVORO -->
+<section id="lavoro" role="tabpanel">
+  <div class="card">
+    <h2>Stipendio</h2>
+    <div class="row"><label for="netto">Netto in busta paga</label><div class="in"><input id="netto" data-k="netto" inputmode="decimal"><i>€/mese</i></div></div>
+    <div class="row"><label for="mensilita">Mensilità</label><div class="in"><input id="mensilita" data-k="mensilita" inputmode="decimal"><i>l’anno</i></div></div>
+    <div class="row"><label for="ral">RAL (lordo annuo)</label><div class="in"><input id="ral" data-k="ral" inputmode="decimal"><i>€</i></div></div>
+  </div>
+  <div class="card">
+    <h2>Tempo</h2>
+    <div class="row"><label for="oreSett">Ore da contratto</label><div class="in"><input id="oreSett" data-k="oreSett" inputmode="decimal"><i>h/sett</i></div></div>
+    <div class="row"><label for="giorniSett">Giorni lavorativi</label><div class="in"><input id="giorniSett" data-k="giorniSett" inputmode="decimal"><i>a sett</i></div></div>
+    <div class="row"><label for="ferie">Ferie</label><div class="in"><input id="ferie" data-k="ferie" inputmode="decimal"><i>giorni</i></div></div>
+    <div class="row"><label for="rol">Permessi (ROL, ex festività)</label><div class="in"><input id="rol" data-k="rol" inputmode="decimal"><i>ore</i></div></div>
+    <div class="row"><label for="festivita">Festività infrasettimanali</label><div class="in"><input id="festivita" data-k="festivita" inputmode="decimal"><i>giorni</i></div></div>
+    <div class="row"><label for="straord">Straordinari non pagati</label><div class="in"><input id="straord" data-k="straord" inputmode="decimal"><i>h/sett</i></div></div>
+    <div class="row"><label for="tragitto">Tragitto andata e ritorno</label><div class="in"><input id="tragitto" data-k="tragitto" inputmode="decimal"><i>min/g</i></div></div>
+  </div>
+  <div class="card">
+    <h2>Costi e benefici del lavoro</h2>
+    <div class="row"><label for="trasporto">Benzina, abbonamenti, parcheggi</label><div class="in"><input id="trasporto" data-k="trasporto" inputmode="decimal"><i>€/mese</i></div></div>
+    <div class="row"><label for="pranzi">Pranzi e caffè al lavoro</label><div class="in"><input id="pranzi" data-k="pranzi" inputmode="decimal"><i>€/mese</i></div></div>
+    <div class="row"><label for="altro">Altre spese per lavorare</label><div class="in"><input id="altro" data-k="altro" inputmode="decimal"><i>€/mese</i></div></div>
+    <div class="row"><label for="buoni">Buoni pasto</label><div class="in"><input id="buoni" data-k="buoni" inputmode="decimal"><i>€/mese</i></div></div>
+    <div class="row"><label for="welfare">Welfare e premi</label><div class="in"><input id="welfare" data-k="welfare" inputmode="decimal"><i>€/anno</i></div></div>
+  </div>
+  <p class="note">I dati restano solo su questo dispositivo.</p>
+  <button class="btn ghost" id="reset">Ripristina i valori di esempio</button>
+</section>
+
+<!-- ORA REALE -->
+<section id="ora" role="tabpanel" hidden>
+  <div class="card plain hero">
+    <p class="lead">Ogni ora che dai al lavoro ti rende davvero</p>
+    <div class="stamp" id="realHour">—</div>
+    <p class="sub">Sulla carta sono <b id="nomHour">—</b> l’ora. <span class="delta" id="deltaTxt"></span></p>
+  </div>
+  <div class="donate">
+    <p><b>Ti ha aperto gli occhi?</b>Ore di vita è gratis e senza pubblicità. Se vuoi sostenerla, bastano 5 minuti del tuo lavoro.</p>
+    <a data-donate href="#" target="_blank" rel="noopener">Offri un caffè</a>
+  </div>
+  <div class="card">
+    <h2>Dove va il tuo tempo</h2>
+    <div class="row"><span class="l">Giorni lavorati l’anno</span><span class="val" id="o_days"></span></div>
+    <div class="row"><span class="l">Ore pagate l’anno</span><span class="val" id="o_paid"></span></div>
+    <div class="row"><span class="l">Ore in viaggio l’anno</span><span class="val" id="o_comm"></span></div>
+    <div class="row"><span class="l">Straordinari regalati l’anno</span><span class="val" id="o_ot"></span></div>
+    <div class="row"><span class="l">Ore reali dedicate al lavoro</span><span class="val" id="o_real"></span></div>
+    <div class="row"><span class="l">In media a settimana</span><span class="val" id="o_week"></span></div>
+  </div>
+  <div class="card">
+    <h2>Dove vanno i tuoi soldi</h2>
+    <div class="row"><span class="l">Netto annuo</span><span class="val" id="m_net"></span></div>
+    <div class="row"><span class="l">Benefit (buoni, welfare)</span><span class="val" id="m_ben"></span></div>
+    <div class="row"><span class="l">Spese per andare a lavorare</span><span class="val" id="m_cost"></span></div>
+    <div class="row"><span class="l">Ti resta davvero</span><span class="val" id="m_left"></span></div>
+  </div>
+  <div class="card">
+    <h2>Pensione</h2>
+    <div class="row"><span class="l">Contributi versati ogni ora</span><span class="val" id="p_hour"></span></div>
+    <div class="row"><span class="l">Contributi versati l’anno</span><span class="val" id="p_year"></span></div>
+    <div class="row"><span class="l">di cui trattenuti a te</span><span class="val" id="p_you"></span></div>
+    <div class="row"><span class="l">Pensione che aggiungi ogni anno</span><span class="val" id="p_add"></span></div>
+    <p class="note">Stima: contributi al 33% della RAL e uscita a 67 anni, senza rivalutazione. Per il quadro completo serve l’estratto conto INPS.</p>
+  </div>
+</section>
+
+<!-- QUANTO COSTA -->
+<section id="costa" role="tabpanel" hidden>
+  <div class="card plain hero">
+    <p class="lead">Quanto costa quello che vuoi comprare?</p>
+    <div class="big-in"><input id="price" inputmode="decimal" aria-label="Prezzo in euro" value="100"><span>€</span></div>
+    <div class="chips" id="chips"></div>
+    <p class="lead" style="margin-top:16px">ti costa</p>
+    <div class="stamp" id="priceTime">—</div>
+    <p class="sub" id="priceDays"></p>
+  </div>
+  <div class="card">
+    <h2>Con un’ora di lavoro compri</h2>
+    <div id="items"></div>
+    <form class="add" id="addForm">
+      <input id="newName" placeholder="Cosa" aria-label="Nome oggetto" required>
+      <input id="newPrice" placeholder="€" inputmode="decimal" aria-label="Prezzo" required>
+      <button class="btn" type="submit">Aggiungi</button>
+    </form>
+    <p class="note">Tocca un nome per metterlo nel calcolo qui sopra.</p>
+  </div>
+</section>
+
+<!-- CONVIENE -->
+<section id="conviene" role="tabpanel" hidden>
+  <div class="card">
+    <h2>Un extra, uno straordinario, un ingaggio</h2>
+    <p class="note">Confronta quanto rende con la tua ora reale.</p>
+    <div class="row"><label for="c_pay">Compenso netto</label><div class="in"><input id="c_pay" data-c="pay" inputmode="decimal"><i>€</i></div></div>
+    <div class="row"><label for="c_hours">Ore di lavoro</label><div class="in"><input id="c_hours" data-c="hours" inputmode="decimal"><i>ore</i></div></div>
+    <div class="row"><label for="c_travel">Ore di viaggio</label><div class="in"><input id="c_travel" data-c="travel" inputmode="decimal"><i>ore</i></div></div>
+    <div class="row"><label for="c_cost">Spese (benzina, pedaggi, pasti)</label><div class="in"><input id="c_cost" data-c="cost" inputmode="decimal"><i>€</i></div></div>
+  </div>
+  <div class="card plain hero">
+    <p class="lead">Rende</p>
+    <div class="stamp" id="c_rate">—</div>
+    <p class="verdict" id="c_verdict"></p>
+  </div>
+</section>
+
+<footer>Calcoli indicativi, utili per ragionare sui numeri. Non sostituiscono un consulente o il simulatore INPS. Ti piace l’app? <a data-donate href="#" target="_blank" rel="noopener">Sostienila con un caffè</a>.</footer>
+</div>
+
+<script>
+(function(){
+  var KEY = "oreDiVita.v1";
+  var DEF = {
+    netto:1600, mensilita:14, ral:28000, oreSett:40, giorniSett:5, ferie:22, rol:32, festivita:10,
+    straord:0, tragitto:60, trasporto:120, pranzi:80, altro:0, buoni:0, welfare:0,
+    price:100,
+    c:{pay:400, hours:8, travel:2, cost:40},
+    items:[
+      {n:"Caffè al bar", p:1.3},
+      {n:"Litro di benzina", p:1.85},
+      {n:"Pizza margherita", p:8},
+      {n:"Abbonamento streaming", p:12},
+      {n:"Cena fuori per due", p:70},
+      {n:"Pieno di benzina", p:90},
+      {n:"Weekend al lago", p:400},
+      {n:"Smartphone top di gamma", p:1200}
+    ]
+  };
+  var S;
+  try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) { S = null; }
+  if (!S || typeof S !== "object") S = JSON.parse(JSON.stringify(DEF));
+  for (var k in DEF) if (S[k] === undefined) S[k] = JSON.parse(JSON.stringify(DEF[k]));
+
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+  function num(v){ var n = parseFloat(String(v).replace(/\./g,"").replace(",", ".")); return isFinite(n) ? n : 0; }
+  function numIn(v){ var s = String(v).trim(); if (s.indexOf(",") > -1) return num(s); var n = parseFloat(s); return isFinite(n) ? n : 0; }
+  function eur(n, d){ if (!isFinite(n)) return "—"; return n.toLocaleString("it-IT",{style:"currency",currency:"EUR",minimumFractionDigits:d===undefined?2:d,maximumFractionDigits:d===undefined?2:d}); }
+  function int(n){ return Math.round(n).toLocaleString("it-IT"); }
+  function dur(h){
+    if (!isFinite(h) || h < 0) return "—";
+    var m = Math.round(h*60);
+    if (m < 1) return "meno di 1 min";
+    if (m < 60) return m + " min";
+    var hh = Math.floor(m/60), mm = m % 60;
+    return hh.toLocaleString("it-IT") + " h" + (mm ? " " + mm + " min" : "");
+  }
+  function $(id){ return document.getElementById(id); }
+
+  function calc(){
+    var gg = Math.max(1, S.giorniSett), dailyH = S.oreSett / gg;
+    var days = Math.max(0, 52*gg - S.festivita - S.ferie);
+    var paidH = Math.max(1, days*dailyH - S.rol);
+    var weeks = days / gg;
+    var commH = S.tragitto/60 * days;
+    var otH = S.straord * weeks;
+    var realH = paidH + commH + otH;
+    var net = S.netto * S.mensilita;
+    var ben = S.buoni*12 + S.welfare;
+    var cost = (S.trasporto + S.pranzi + S.altro) * 12;
+    var left = net + ben - cost;
+    var contrib = S.ral * 0.33;
+    return {
+      days:days, paidH:paidH, commH:commH, otH:otH, realH:realH, week:realH/52,
+      net:net, ben:ben, cost:cost, left:left,
+      nominal: net/paidH, real: left/realH,
+      contribH: contrib/paidH, contrib:contrib, contribYou:S.ral*0.0919, pensAdd: contrib*0.056
+    };
+  }
+
+  var R;
+  function renderAll(){
+    R = calc();
+    $("miniHour").textContent = eur(R.real);
+    $("realHour").textContent = eur(R.real);
+    $("nomHour").textContent = eur(R.nominal);
+    var d = R.nominal > 0 ? (R.real/R.nominal - 1) * 100 : 0;
+    var dt = $("deltaTxt");
+    if (Math.abs(d) < 0.5) { dt.textContent = "Coincidono."; dt.className = "delta"; }
+    else if (d < 0) { dt.textContent = "Tra viaggi, spese e straordinari perdi il " + Math.abs(d).toFixed(0) + "%."; dt.className = "delta bad"; }
+    else { dt.textContent = "I benefit ti fanno guadagnare il " + d.toFixed(0) + "% in più."; dt.className = "delta good"; }
+    $("o_days").textContent = int(R.days);
+    $("o_paid").textContent = int(R.paidH) + " h";
+    $("o_comm").textContent = int(R.commH) + " h";
+    $("o_ot").textContent = int(R.otH) + " h";
+    $("o_real").textContent = int(R.realH) + " h";
+    $("o_week").textContent = dur(R.week);
+    $("m_net").textContent = eur(R.net,0);
+    $("m_ben").textContent = "+" + eur(R.ben,0);
+    $("m_cost").textContent = "−" + eur(R.cost,0);
+    $("m_left").textContent = eur(R.left,0);
+    $("p_hour").textContent = S.ral ? eur(R.contribH) : "inserisci la RAL";
+    $("p_year").textContent = S.ral ? eur(R.contrib,0) : "—";
+    $("p_you").textContent = S.ral ? eur(R.contribYou,0) : "—";
+    $("p_add").textContent = S.ral ? "+" + eur(R.pensAdd,0) + " l’anno" : "—";
+    renderPrice(); renderItems(); renderConv();
+  }
+
+  function renderPrice(){
+    var h = R.real > 0 ? S.price / R.real : NaN;
+    var st = $("priceTime");
+    st.textContent = R.real > 0 ? dur(h) : "—";
+    st.classList.remove("pop"); void st.offsetWidth; st.classList.add("pop");
+    var dailyReal = R.realH / Math.max(1,R.days);
+    $("priceDays").textContent = (R.real > 0 && h >= dailyReal)
+      ? "di lavoro reale, cioè " + (h/dailyReal).toLocaleString("it-IT",{maximumFractionDigits:1}) + " giornate lavorative"
+      : "di lavoro reale";
+  }
+
+  function renderItems(){
+    var box = $("items"); box.innerHTML = "";
+    var chips = $("chips"); chips.innerHTML = "";
+    S.items.forEach(function(it, i){
+      var perHour = R.real > 0 ? R.real / it.p : 0;
+      var row = document.createElement("div"); row.className = "item";
+      var name = document.createElement("button");
+      name.className = "name"; name.type = "button";
+      name.style.cssText = "all:unset;cursor:pointer";
+      name.innerHTML = "";
+      name.appendChild(document.createTextNode(it.n));
+      var sm = document.createElement("small");
+      sm.textContent = eur(it.p) + " · costa " + dur(it.p / R.real);
+      name.appendChild(sm);
+      name.addEventListener("click", function(){ setPrice(it.p); });
+      var q = document.createElement("div"); q.className = "q";
+      q.textContent = perHour >= 10 ? int(perHour) : perHour.toLocaleString("it-IT",{maximumFractionDigits: perHour < 1 ? 2 : 1});
+      var qs = document.createElement("small"); qs.textContent = perHour < 1 ? "pezzi l’ora" : "l’ora"; q.appendChild(qs);
+      var x = document.createElement("button"); x.className = "x"; x.type = "button"; x.textContent = "×";
+      x.setAttribute("aria-label", "Rimuovi " + it.n);
+      x.addEventListener("click", function(){ S.items.splice(i,1); save(); renderAll(); });
+      row.appendChild(name); row.appendChild(q); row.appendChild(x);
+      box.appendChild(row);
+      if (i < 6) {
+        var c = document.createElement("button"); c.type = "button"; c.textContent = it.n;
+        c.addEventListener("click", function(){ setPrice(it.p); });
+        chips.appendChild(c);
+      }
+    });
+  }
+
+  function setPrice(p){
+    S.price = p; $("price").value = String(p).replace(".", ",");
+    save(); renderPrice();
+  }
+
+  function renderConv(){
+    var c = S.c;
+    var h = c.hours + c.travel;
+    var rate = h > 0 ? (c.pay - c.cost) / h : NaN;
+    $("c_rate").textContent = isFinite(rate) ? eur(rate) + " l’ora" : "—";
+    var v = $("c_verdict");
+    if (!isFinite(rate) || !(R.real > 0)) { v.textContent = "Inserisci compenso e ore."; v.style.color = ""; return; }
+    var ratio = rate / R.real;
+    var pct = Math.abs((ratio - 1) * 100).toFixed(0);
+    if (ratio >= 1.15) { v.textContent = "Conviene: il " + pct + "% in più della tua ora reale (" + eur(R.real) + ")."; v.style.color = "var(--good)"; }
+    else if (ratio > 0.85) { v.textContent = "Più o meno come la tua ora reale (" + eur(R.real) + "). Decidi tu se ne vale la fatica."; v.style.color = ""; }
+    else { v.textContent = "Non conviene: il " + pct + "% in meno della tua ora reale (" + eur(R.real) + ")."; v.style.color = "var(--bad)"; }
+  }
+
+  function fill(){
+    document.querySelectorAll("[data-k]").forEach(function(el){ el.value = String(S[el.dataset.k]).replace(".", ","); });
+    document.querySelectorAll("[data-c]").forEach(function(el){ el.value = String(S.c[el.dataset.c]).replace(".", ","); });
+    $("price").value = String(S.price).replace(".", ",");
+  }
+
+  document.querySelectorAll("[data-k]").forEach(function(el){
+    el.addEventListener("input", function(){ S[el.dataset.k] = numIn(el.value); save(); renderAll(); });
+  });
+  document.querySelectorAll("[data-c]").forEach(function(el){
+    el.addEventListener("input", function(){ S.c[el.dataset.c] = numIn(el.value); save(); renderConv(); });
+  });
+  $("price").addEventListener("input", function(){ S.price = numIn(this.value); save(); renderPrice(); });
+  $("addForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var n = $("newName").value.trim(), p = numIn($("newPrice").value);
+    if (!n || !(p > 0)) return;
+    S.items.push({n:n, p:p}); $("newName").value = ""; $("newPrice").value = "";
+    save(); renderAll();
+  });
+  $("reset").addEventListener("click", function(){
+    S = JSON.parse(JSON.stringify(DEF)); save(); fill(); renderAll();
+  });
+
+  var tabs = ["lavoro","ora","costa","conviene"];
+  function show(t){
+    if (tabs.indexOf(t) < 0) t = "lavoro";
+    tabs.forEach(function(x){ $(x).hidden = x !== t; });
+    document.querySelectorAll("nav button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab === t ? "true" : "false"); });
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll("nav button").forEach(function(b){
+    b.addEventListener("click", function(){ show(b.dataset.tab); });
+  });
+  $("miniHour").parentNode.style.cursor = "pointer";
+  $("miniHour").parentNode.addEventListener("click", function(){ show("ora"); });
+
+  // Link donazioni: sostituisci con il tuo (Buy Me a Coffee, Ko-fi, PayPal.me)
+  var DONATE_URL = "https://buymeacoffee.com/alexsofo";
+  document.querySelectorAll("[data-donate]").forEach(function(a){ a.href = DONATE_URL; });
+
+  fill(); renderAll();
+  show((location.hash || "").replace("#",""));
+})();
+</script>
+</body>
+</html>
